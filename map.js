@@ -102,9 +102,21 @@ function CreateCSV(){
         return;
     }
     var csv = [];
-    csv.push({x: lines[0].x1, y: lines[0].y1})
     lines.forEach(line => {
-        csv.push({x: line.x2, y: line.y2})
+        let x1 = line.x1 - (setRoombaX + receivedRoombaX);
+        let y1 = line.y1 - (setRoombaY + receivedRoombaY);
+        let x2 = line.x2 - (setRoombaX + receivedRoombaX);
+        let y2 = line.y2 - (setRoombaY + receivedRoombaY);
+        csv.push({
+            x: x1,
+            y: y1,
+            heading: Math.atan2((y1 - y2), (x2 - x1))
+        });
+        csv.push({
+            x: x2,
+            y: y2,
+            heading: Math.atan2((y2 - y1), (x1 - x2))
+        });
     })
     console.log(csv);
 
