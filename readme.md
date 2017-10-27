@@ -13,3 +13,11 @@ npm install
 
 node app.js
 
+open browser to localhost: 5000
+
+draw lines by clicking in the first spot and then click again to finish
+
+place roomba using the place roomba button and click where you would like the roomba placed
+
+can send new x y values using the console using the arrow keys
+
