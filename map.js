@@ -50,6 +50,16 @@ function draw() {
         line(0, y, MAX_X, y)
     }
 
+    if(turn == 1) {
+        stroke(100)
+        fill(100)
+        ellipse(click1.x, click1.y, 30)
+        let snap = calculateSnapPoint();
+        stroke(255, 0, 0)
+        strokeWeight(2);
+        line(click1.x, click1.y, snap.x, snap.y);
+    }
+
     // for each line we have saved, draw the line and its length
     lines.forEach(l => {
         // set the line color to red for drawing lines
@@ -165,12 +175,8 @@ function mouseClicked() {
     } else {
         // if we only allow for 90 degree lines, fine the closest intersection point and make that the point
         if(onlyAllow90) {
-            // need to determine which direction the user wanted to go
-            let xDistance = Math.abs(click1.x - mouseX);
-            let yDistance = Math.abs(click1.y - mouseY); 
-
-            click2.x = Math.max(xDistance, yDistance) == xDistance ? Math.round(mouseX / LINE_SPACING) * LINE_SPACING : click1.x;
-            click2.y = Math.max(xDistance, yDistance) == yDistance ? Math.round(mouseY / LINE_SPACING) * LINE_SPACING : click1.y;
+            click2.x = calculateSnapPoint().x;
+            click2.y = calculateSnapPoint().y;
         } else {
             click2.x = Math.round(mouseX / LINE_SPACING) * LINE_SPACING;
             click2.y = Math.round(mouseY / LINE_SPACING) * LINE_SPACING ;
@@ -194,4 +200,17 @@ function mouseClicked() {
 
     // prevent default click effect
     return false;
+}
+
+function calculateSnapPoint() {
+    // need to determine which direction the user wanted to go
+    let xDistance = Math.abs(click1.x - mouseX);
+    let yDistance = Math.abs(click1.y - mouseY); 
+
+    let snap = {};
+
+    snap.x = Math.max(xDistance, yDistance) == xDistance ? Math.round(mouseX / LINE_SPACING) * LINE_SPACING : click1.x;
+    snap.y = Math.max(xDistance, yDistance) == yDistance ? Math.round(mouseY / LINE_SPACING) * LINE_SPACING : click1.y;
+
+    return snap;
 }
