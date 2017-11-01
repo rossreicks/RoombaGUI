@@ -3,15 +3,12 @@ Creates a simple visual 2D map in p5js to output csv coordinates to send to a ro
 
 Uses websockets for real time positioning of the roomba while it navigates the map
 
-# Requirements
-Node js
-
 ## installing instructions
 clone this repo
 
-npm install
+pip install git+https://github.com/dpallot/simple-websocket-server.git
 
-node app.js
+python app.py
 
 open browser to localhost: 5000
 

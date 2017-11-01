@@ -3,6 +3,13 @@ import json
 import threading
 import time
 
+import SimpleHTTPServer
+import SocketServer
+
+PORT = 5000
+
+Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+
 x = 0
 y = 0
 heading = 0
@@ -32,9 +39,15 @@ class EchoCSV(WebSocket):
 
 
 server = SimpleWebSocketServer('', 4000, EchoCSV)
-t = threading.Thread(target = server.serveforever)
-t.daemon = True
-t.start()
+httpd = SocketServer.TCPServer(("", PORT), Handler)
+
+print "serving at port", PORT
+t1 = threading.Thread(target = server.serveforever)
+t2 = threading.Thread(target= httpd.serve_forever)
+t1.daemon = True
+t1.start()
+t2.daemon = True
+t2.start()
 while 1:
     for client in clients:
         client.sendMessage(u"{{ \"x\": {}, \"y\": {}, \"heading\": {} }}".format(x, y, heading))
