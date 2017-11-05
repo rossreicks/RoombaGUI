@@ -4,11 +4,11 @@ let turn = 0;
 
 var lines = [];
 
-const MAX_X = 1200;
-const MAX_Y = 800;
+const MAX_X = 800;
+const MAX_Y = 600;
 const LINE_SPACING = 20;
 const onlyAllow90 = true;
-var mode = 0; // 0 is draw mode, 1 is erase mode
+var mode = 1; // 0 is wall mode, 1 is slab mode, 2 is roomba placement mode, 3 is wall select mode
 
 let receivedRoombaX = 0;
 let receivedRoombaY = 0;
@@ -50,21 +50,31 @@ function draw() {
         line(0, y, MAX_X, y)
     }
 
+    strokeWeight(2);
+    if(mode == 0) {
+        stroke(255, 0, 0);
+    } else if(mode == 1) {
+        stroke(0, 255, 0);
+    }
+    
+    let intersection = calculateIntersectionPoint();
+    //line(intersection.x - 5, intersection.y + 5, intersection.x + 5, intersection.y - 5);
+    //line(intersection.x + 5, intersection.y - 5, intersection.x - 5, intersection.y + 5);
+
     if(turn == 1) {
-        stroke(100)
-        fill(100)
-        ellipse(click1.x, click1.y, 30)
         let snap = calculateSnapPoint();
-        stroke(255, 0, 0)
-        strokeWeight(2);
         line(click1.x, click1.y, snap.x, snap.y);
     }
 
     // for each line we have saved, draw the line and its length
     lines.forEach(l => {
         // set the line color to red for drawing lines
-        stroke(255, 0, 0)
         strokeWeight(2);
+        if(l.type == 0) {
+            stroke(255, 0, 0);
+        } else if(l.type == 1) {
+            stroke(0, 255, 0);
+        }
         line(l.x1, l.y1, l.x2, l.y2);
 
         // set the stroke back to default for drawing text
@@ -87,6 +97,15 @@ function draw() {
     strokeWeight(1);
     stroke(0, 150, 0);
     ellipse(setRoombaX + receivedRoombaX, setRoombaY + receivedRoombaY, 50);
+
+    if(mode == 0) {
+        // find the line that is closest to the mouse
+        let foo = lines.filter(l => {
+            return (l.type == 0 && Math.abs(l.x - mouseX) < 50 || Math.abs(l.y - mouseY))
+        })
+
+        console.log(foo);
+    }
 }
 
 /*
@@ -119,12 +138,12 @@ function CreateCSV(){
         let y2 = line.y2 - (setRoombaY + receivedRoombaY);
         csv.push({
             x: x1,
-            y: y1,
+            y: -1 * y1,
             heading: Math.atan2((y1 - y2), (x2 - x1))
         });
         csv.push({
             x: x2,
-            y: y2,
+            y: -1 * y2,
             heading: Math.atan2((y2 - y1), (x1 - x2))
         });
     })
@@ -133,13 +152,13 @@ function CreateCSV(){
     ws.send(JSON.stringify(csv));
 }
 
-function EnableDrawMode(e) {
+function EnableWallMode(e) {
     turn = 0;
     mode = 0;
     e.preventDefault()
 }
 
-function EnableEraseMode(e) {
+function EnableSlabMode(e) {
     turn = 0;
     mode = 1;
     e.preventDefault();
@@ -182,24 +201,20 @@ function mouseClicked() {
             click2.y = Math.round(mouseY / LINE_SPACING) * LINE_SPACING ;
         }
         // if we are in draw mode create a line at that point
-        if(mode == 0) {
-            stroke(255, 0, 0)
-            strokeWeight(2);
-            console.log(lines.length)
-            let newLine = { x1: click1.x, y1: click1.y, x2: click2.x, y2: click2.y};
-            lines.push(newLine);
-        // else we are in erase mode and try to find the line closest to that value and erase it from the array
-        } else if (mode == 1) {
-            lines.forEach(l => {
-                // some kind of algorithm here to find the closest matching line
-                // and remove it
-            })
-        }
+        let newLine = { x1: click1.x, y1: click1.y, x2: click2.x, y2: click2.y, type: mode};
+        lines.push(newLine);
         turn = 0;
     }
 
     // prevent default click effect
     return false;
+}
+
+function calculateIntersectionPoint() {
+    return {
+        x: Math.round(mouseX / LINE_SPACING) * LINE_SPACING,
+        y: Math.round(mouseY / LINE_SPACING) * LINE_SPACING 
+    }   
 }
 
 function calculateSnapPoint() {
@@ -208,9 +223,10 @@ function calculateSnapPoint() {
     let yDistance = Math.abs(click1.y - mouseY); 
 
     let snap = {};
+    let intersection = calculateIntersectionPoint();
 
-    snap.x = Math.max(xDistance, yDistance) == xDistance ? Math.round(mouseX / LINE_SPACING) * LINE_SPACING : click1.x;
-    snap.y = Math.max(xDistance, yDistance) == yDistance ? Math.round(mouseY / LINE_SPACING) * LINE_SPACING : click1.y;
+    snap.x = Math.max(xDistance, yDistance) == xDistance ? intersection.x : click1.x;
+    snap.y = Math.max(xDistance, yDistance) == yDistance ? intersection.y : click1.y;
 
     return snap;
 }

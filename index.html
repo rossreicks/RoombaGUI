@@ -2,10 +2,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.16/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web-socket-js/1.0.0/web_socket.js"></script>
     <script src="./map.js"></script>
+
+    <style>
+        canvas {
+            position: absolute;
+            left: 30px;
+            right: 30px;
+        }
+    </style>
 </head>
 <body>
-    <button style="position: absolute; right: 10px; top: 10px" onclick="EnableEraseMode(event)">Erase Mode</button>
-    <button style="position: absolute; right: 10px; top: 40px" onclick="EnableDrawMode(event)">Draw Mode</button>
+    <button style="position: absolute; right: 10px; top: 10px" onclick="EnableSlabMode(event)">Slab Mode</button>
+    <button style="position: absolute; right: 10px; top: 40px" onclick="EnableWallMode(event)">Wall Mode</button>
     <button style="position: absolute; right: 10px; top: 70px" onclick="setup()">Clear</button>
     <button style="position: absolute; right: 10px; top: 100px" onclick="CreateCSV()">Create CSV</button>
     <button style="position: absolute; right: 10px; top: 190px" onclick="EnableRoombaPlacementMode(event)">Place Roomba</button>
