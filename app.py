@@ -3,12 +3,12 @@ import json
 import threading
 import time
 
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import socketserver
 
 PORT = 5000
 
-Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+Handler = http.server.SimpleHTTPRequestHandler
 
 x = 0
 y = 0
@@ -39,9 +39,9 @@ class EchoCSV(WebSocket):
 
 
 server = SimpleWebSocketServer('', 4000, EchoCSV)
-httpd = SocketServer.TCPServer(("", PORT), Handler)
+httpd = socketserver.TCPServer(("", PORT), Handler)
 
-print "serving at port", PORT
+print("serving at port", PORT)
 t1 = threading.Thread(target = server.serveforever)
 t2 = threading.Thread(target= httpd.serve_forever)
 t1.daemon = True

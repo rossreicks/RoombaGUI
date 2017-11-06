@@ -50,20 +50,38 @@ function draw() {
         line(0, y, MAX_X, y)
     }
 
+    if(mode == 0) {
+        // find closest line to the cursor
+        let foo = lines.filter(l => {
+            return l;
+        })
+
+        //console.log(foo);
+    }
+
     strokeWeight(2);
     if(mode == 0) {
+        // red
         stroke(255, 0, 0);
     } else if(mode == 1) {
+        // green
         stroke(0, 255, 0);
     }
     
-    let intersection = calculateIntersectionPoint();
-    //line(intersection.x - 5, intersection.y + 5, intersection.x + 5, intersection.y - 5);
-    //line(intersection.x + 5, intersection.y - 5, intersection.x - 5, intersection.y + 5);
-
+    if(turn == 0) {
+        // draw an x at the closest intersection point
+        let intersection = calculateIntersectionPoint();
+        line(intersection.x - 5, intersection.y - 5, intersection.x + 5, intersection.y + 5);
+        line(intersection.x - 5, intersection.y + 5, intersection.x + 5, intersection.y - 5);
+    }
     if(turn == 1) {
+        // draw a line from the last click point to the current mouse position
         let snap = calculateSnapPoint();
         line(click1.x, click1.y, snap.x, snap.y);
+
+        // draw an x at the closest snap point to the mouse
+        line(snap.x - 5, snap.y - 5, snap.x + 5, snap.y + 5);
+        line(snap.x - 5, snap.y + 5, snap.x + 5, snap.y - 5);
     }
 
     // for each line we have saved, draw the line and its length
@@ -97,15 +115,6 @@ function draw() {
     strokeWeight(1);
     stroke(0, 150, 0);
     ellipse(setRoombaX + receivedRoombaX, setRoombaY + receivedRoombaY, 50);
-
-    if(mode == 0) {
-        // find the line that is closest to the mouse
-        let foo = lines.filter(l => {
-            return (l.type == 0 && Math.abs(l.x - mouseX) < 50 || Math.abs(l.y - mouseY))
-        })
-
-        console.log(foo);
-    }
 }
 
 /*
